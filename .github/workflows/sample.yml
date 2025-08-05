@@ -23,12 +23,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-      
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: dist
-          path: /
+
   
   second-job:
     runs-on: ubuntu-latest
@@ -36,3 +31,6 @@ jobs:
     steps:
       - name: Setup Java JDK
         uses: actions/setup-java@v3.14.1
+        with:
+          distribution: 'temurin' 
+          java-version: '17'
