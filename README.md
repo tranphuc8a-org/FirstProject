@@ -1,3 +1,3 @@
 # FirstProject
 
-This is content of readme
+This is content of README
