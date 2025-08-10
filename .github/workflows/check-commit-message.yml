@@ -6,7 +6,7 @@ on:
 
 jobs:
   commit-message-check:
-    runs-on: ubuntu-latest
+    runs-on: [ubuntu-latest, self-hosted]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
