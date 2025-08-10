@@ -23,19 +23,19 @@ jobs:
         run: |
           echo "🔍 Checking commit messages..."
           allowed_types="feat|fix|docs|style|refactor|test|chore"
-
           invalid_found=false
           while IFS= read -r msg; do
             if ! echo "$msg" | grep -Eq "^($allowed_types)(\([a-z0-9_-]+\))?: [a-z0-9].*[^.]$"; then
-              echo "❌ Invalid commit message: \"$msg\""
+              echo "❌ Commit message không hợp lệ: \"$msg\""
+              echo "   Lý do: Không đúng định dạng chuẩn (ví dụ: feat: mô tả)"
               invalid_found=true
             else
               echo "✅ Valid: \"$msg\""
             fi
           done < commit_messages.txt
-
+      
           if [ "$invalid_found" = true ]; then
-            echo "❌ One or more commit messages are invalid."
+            echo "❌ Có commit message không hợp lệ. Vui lòng sửa lại theo chuẩn."
             exit 1
           fi
         env:
