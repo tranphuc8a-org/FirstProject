@@ -16,6 +16,8 @@ jobs:
           # Lấy danh sách commit messages trong PR
           PR_NUMBER=${{ github.event.pull_request.number }}
           gh pr view $PR_NUMBER --json commits --jq '.commits[].commit.message' > commit_messages.txt
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Validate commit messages
         run: |
