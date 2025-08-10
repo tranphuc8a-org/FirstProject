@@ -5,8 +5,44 @@ on:
     types: [opened, reopened, synchronize]
 
 jobs:
-  commit-message-check:
-    runs-on: [ubuntu-latest, self-hosted]
+  commit-message-check-self-hosted:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Fetch all commits in the PR
+        run: |
+          # Lấy danh sách commit messages trong PR
+          PR_NUMBER=${{ github.event.pull_request.number }}
+          gh pr view $PR_NUMBER --json commits --jq '.commits[].commit.message' > commit_messages.txt
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Validate commit messages
+        run: |
+          echo "🔍 Checking commit messages..."
+          allowed_types="feat|fix|docs|style|refactor|test|chore"
+          invalid_found=false
+          while IFS= read -r msg; do
+            if ! echo "$msg" | grep -Eq "^($allowed_types)(\([a-z0-9_-]+\))?: [a-z0-9].*[^.]$"; then
+              echo "❌ Commit message không hợp lệ: \"$msg\""
+              echo "   Lý do: Không đúng định dạng chuẩn (ví dụ: feat: mô tả)"
+              invalid_found=true
+            else
+              echo "✅ Valid: \"$msg\""
+            fi
+          done < commit_messages.txt
+      
+          if [ "$invalid_found" = true ]; then
+            echo "❌ Có commit message không hợp lệ. Vui lòng sửa lại theo chuẩn."
+            exit 1
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  commit-message-check-github-runner:
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
